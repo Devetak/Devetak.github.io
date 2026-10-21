@@ -7,14 +7,42 @@
     <style>
         body {
             background-color: #FFFDD0;
+            isolation: isolate;
         }
         h1 {
             color: #FF5733; /* Bold, bright color */
             font-weight: bold;
         }
+        .ascii-background {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            display: grid;
+            place-items: center;
+            overflow: hidden;
+            opacity: 0.14;
+            pointer-events: none;
+            user-select: none;
+        }
+        .ascii-background pre {
+            color: #FF5733;
+            font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+            font-size: clamp(8px, 1.8vw, 22px);
+            line-height: 1;
+            margin: 0;
+            white-space: pre;
+        }
+        .page-content {
+            position: relative;
+            z-index: 1;
+        }
     </style>
 </head>
 <body>
+    <div class="ascii-background" aria-hidden="true">
+        <pre id="ascii-background-art"></pre>
+    </div>
+    <main class="page-content">
     <h1>Welcome to Mitja Devetak's Personal Website</h1>
     <img src="./data/photo.png" alt="Me" style="width:300px;height:auto;">
     <p>Email: <a href="mailto:m888itja@gmail.com">m888itja [at] gmail.com</a></p>
@@ -29,7 +57,7 @@
             </strong>
             <br>
             <a href="https://github.com/Devetak/ESRIcascade.jl" target="_blank">Code</a> |
-            <a href="https://arxiv.org/abs/2609.03782v1" target="_blank">Pre-print</a>
+            <a href="https://www.sciencedirect.com/science/article/pii/S2352711026006448" target="_blank">Article</a>
         </li>
         <li>
             <strong>
@@ -147,6 +175,33 @@
         <a href="./data/quote_flip_report.pdf" target="_blank">PDF</a>
     </li>
 </ul>
+
+    </main>
+    <script src="./data/torus-knot.js"></script>
+    <script>
+        const output = document.getElementById("ascii-background-art");
+        const renderFrame = makeTorusKnot();
+        const draw = (time) => {
+            output.textContent = renderFrame(time, { paper: true });
+        };
+
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+            draw(0);
+        } else {
+            let start;
+            let lastFrame = 0;
+            const frameDuration = 1000 / 30;
+            const animate = (now) => {
+                if (start === undefined) start = now;
+                if (now - lastFrame >= frameDuration) {
+                    draw((now - start) / 1000);
+                    lastFrame = now;
+                }
+                requestAnimationFrame(animate);
+            };
+            requestAnimationFrame(animate);
+        }
+    </script>
 
 </body>
 </html>
